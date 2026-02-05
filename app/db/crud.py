@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import desc
 from typing import List, Optional
 from app.db import models
+from . import models
 
 # ========== CRUD для категорий ==========
 
@@ -104,3 +105,26 @@ def delete_book(db: Session, book_id: int) -> bool:
         db.commit()
         return True
     return False
+
+def get_categories_with_books(db: Session, skip: int = 0, limit: int = 100):
+    """Получение категорий с книгами"""
+    return db.query(models.Category).offset(skip).limit(limit).all()
+
+def search_books(db: Session, title: Optional[str] = None, 
+                 category_id: Optional[int] = None,
+                 min_price: Optional[float] = None,
+                 max_price: Optional[float] = None,
+                 skip: int = 0, limit: int = 100):
+    """Поиск книг по различным критериям"""
+    query = db.query(models.Book).join(models.Category)
+    
+    if title:
+        query = query.filter(models.Book.title.ilike(f"%{title}%"))
+    if category_id:
+        query = query.filter(models.Book.category_id == category_id)
+    if min_price is not None:
+        query = query.filter(models.Book.price >= min_price)
+    if max_price is not None:
+        query = query.filter(models.Book.price <= max_price)
+    
+    return query.offset(skip).limit(limit).all()

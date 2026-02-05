@@ -3,3 +3,23 @@ venv/
 *.pyc
 __pycache__/
 *.sqlite3
+
+# FastAPI
+__pycache__/
+*.pyc
+instance/
+.webassets-cache
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# macOS
+.DS_Store
